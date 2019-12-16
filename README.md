@@ -4,7 +4,7 @@
 
 Run build.py to create output packages in a new folder at `output/`.
 
-### build_vamp-alsa-host.py
+### build_vamp_alsa_host.py
 
 Source repo at https://github.com/sensorgnome-org/vamp-alsa-host
 
