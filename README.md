@@ -1,0 +1,20 @@
+# Tools to build Sensorgnome Images and Packages
+
+## Package Building
+
+Run build.py to create output packages in a new folder at `output/`.
+
+### build_vamp-alsa-host.py
+
+Source repo at https://github.com/sensorgnome-org/vamp-alsa-host
+
+#### Dependendcies
+
+- Debian:
+  - libfftw3-3
+  - libfftw3-dev
+  - vamp-plugin-sdk
+  - libboost-all-dev
+  - libasound2-dev
+- Python:
+  - gitpython
