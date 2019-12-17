@@ -2,7 +2,7 @@ import git
 import time
 import subprocess
 import sys
-from os import mkdir, chdir, getcwd, makedirs, path
+from os import mkdir, chdir, getcwd, makedirs, path, chmod
 from shutil import copyfile
 from helpers import timestamp, bcolors
 
@@ -41,7 +41,7 @@ def build(temp_dir, build_output_dir, version):
         "Version": version,
         "Architecture": "armhf",
         "Essential": "yes",
-        "Depends": "libboost-filesystem-dev, libboost-system-dev, libboost-thread-dev, libasound2.dev, libvamp-hostsdk3v5, libfftw3-dev",
+        "Depends": "libboost-filesystem-dev, libboost-system-dev, libboost-thread-dev, libasound2-dev, libvamp-hostsdk3v5, libfftw3-dev",
         "Maintainer": "Dale Floer <dalefloer@gmail.com>",
         "Description": "ALSA support for hosting vamp audio plugins for Sensorgnome.",
         }
@@ -51,18 +51,22 @@ def build(temp_dir, build_output_dir, version):
         for x in output:
             f.write(x)
     # Copy files to where they should go.
-    # Dictionary of the form {"filename": ["source_path", "destination_path"]}
+    # Dictionary of the form {"filename": ["source_path", "destination_path", "permissions"]}
     # Where source path is the path from build artifacts.
-    # And the destination path is the _absolute_ path to where we want the file to go.
-    # Todo: support perms and owners.
+    # The destination path is the _absolute_ path to where we want the file to go.
+    # Permissions are the permissions that file should have, in octal form as in Linux.
+    # Todo: support owners.
     files = {
-        "vamp-alsa-host": [build_dir, path.join(temp_package_dir, "usr", "bin")],
+        "vamp-alsa-host": [build_dir, path.join(temp_package_dir, "usr", "bin"), 0o755],
         }
     for file_name, file_paths in files.items():
         source = path.join(file_paths[0], file_name)
         destination = path.join(file_paths[1], file_name)
+        permissions = file_paths[2]
         makedirs(file_paths[1])
         copyfile(source, destination)
+        if permissions is not None:
+            chmod(destination, permissions)
     # Finally, package our files.
     dpkg_cmd = f"dpkg-deb --build {temp_package_dir}"
     dpkg_process = subprocess.Popen(dpkg_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
