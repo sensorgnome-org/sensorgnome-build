@@ -2,6 +2,7 @@ from os import mkdir, rmdir
 from shutil import rmtree
 
 import build_vamp_alsa_host as vamp_alsa_host
+import build_vamp_plugins as vamp_plugins
 
 
 
@@ -23,3 +24,5 @@ if __name__ == "__main__":
         pass
     vamp_alsa_host_version = "0.5-1"
     vamp_alsa_host.build(temp_dir, build_dir, vamp_alsa_host_version)
+    vamp_plugins_version = "0.5-1"
+    vamp_plugins.build(temp_dir, build_dir, vamp_plugins_version)
