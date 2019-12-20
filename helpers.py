@@ -1,5 +1,5 @@
 from datetime import datetime
-from os import chdir, makedirs, path, chmod
+from os import chdir, makedirs, path, chmod, walk
 from shutil import copyfile, copytree
 
 """
@@ -68,4 +68,16 @@ def install_files(files):
         except IsADirectoryError:
             copytree(source, destination)
         if permissions is not None:  # Permissions are not supported for multiple files right now.
-            chmod(destination, permissions)    
+            recursive_chmod(destination, permissions)
+            
+def recursive_chmod(base_path, permissions):
+    """
+    Recursively chmod files and directories from the given base path, including the root.
+    Args:
+        base_path (path): Path to start chmod from.
+        permissions (int): Octal permissions to set.
+    """
+    for dir_path, _, file_names in walk(base_path):
+        chmod(dir_path, permissions)
+        for file in file_names:
+            chmod(path.join(dir_path, file), permissions)

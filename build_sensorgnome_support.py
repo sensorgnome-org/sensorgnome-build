@@ -42,7 +42,7 @@ def build(temp_dir, build_output_dir, version):
         "Version": version,
         "Architecture": "armhf",
         "Essential": "yes",
-        "Depends": "perl, awk, python, bash",
+        "Depends": "perl, awk, python, bash, libjson-perl, vsftpd, udhcpcd, autossh",
         "Maintainer": "Dale Floer <dalefloer@gmail.com>",
         "Description": "Sensorgnome master control process.",
         }
@@ -53,7 +53,7 @@ def build(temp_dir, build_output_dir, version):
             f.write(x)
     # Copy files to where they should go.
     files = {
-        "scripts/": [build_dir, path.join(temp_package_dir, "home", "pi", "proj", "sensorgnome"), None],
+        "scripts/": [build_dir, path.join(temp_package_dir, "home", "pi", "proj", "sensorgnome"), 0o755],
         "udev-rules/usb-hub-devices.rules": [build_dir, path.join(temp_package_dir, "etc", "udev", "rules.d"), None],
         "root/etc/": [build_dir, path.join(temp_package_dir, "etc"), None],
         # "root/dev/sdcard/uboot/network.txt": [build_dir, path.join(temp_package_dir, "boot"), None],
