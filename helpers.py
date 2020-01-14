@@ -1,6 +1,7 @@
 from datetime import datetime
 from os import chdir, makedirs, path, chmod, walk
 from shutil import copyfile, copytree
+import subprocess
 
 """
 The purpose of this file is to contain helper functions used elsewhere.
@@ -81,3 +82,20 @@ def recursive_chmod(base_path, permissions):
         chmod(dir_path, permissions)
         for file in file_names:
             chmod(path.join(dir_path, file), permissions)
+
+def create_package(output_package_name, base_dir, temp_dir, temp_package_dir, build_output_dir):
+    dpkg_cmd = f"dpkg-deb --build {temp_package_dir}"
+    dpkg_process = subprocess.Popen(dpkg_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # Wait for dpkg-deb to finish.
+    while True:
+        line = dpkg_process.stdout.readline()
+        err =  dpkg_process.stderr.readline()
+        if err:
+            return err.decode('ascii') # Should probably raise an exception here.
+        elif line == b'' and err == b'':
+            break
+    # Finally, copy the finished package to the output dir.
+    src = path.join(temp_dir, output_package_name)
+    dest = path.join(base_dir, build_output_dir, output_package_name)
+    copyfile(src, dest)
+    return False
