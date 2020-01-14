@@ -2,9 +2,9 @@ import git
 import time
 import subprocess
 import sys
-from os import mkdir, chdir, getcwd, makedirs, path, chmod
+from os import mkdir, chdir, getcwd, path
 from shutil import copyfile
-from helpers import timestamp, bcolors
+from helpers import timestamp, bcolors, install_files, create_package
 
 PROJECT = "vamp-alsa-host"
 REPO = "https://github.com/sensorgnome-org/vamp-alsa-host"
@@ -51,37 +51,14 @@ def build(temp_dir, build_output_dir, version):
         for x in output:
             f.write(x)
     # Copy files to where they should go.
-    # Dictionary of the form {"filename": ["source_path", "destination_path", "permissions"]}
-    # Where source path is the path from build artifacts.
-    # The destination path is the _absolute_ path to where we want the file to go.
-    # Permissions are the permissions that file should have, in octal form as in Linux.
-    # Todo: support owners.
     files = {
         "vamp-alsa-host": [build_dir, path.join(temp_package_dir, "usr", "bin"), 0o755],
         }
-    for file_name, file_paths in files.items():
-        source = path.join(file_paths[0], file_name)
-        destination = path.join(file_paths[1], file_name)
-        permissions = file_paths[2]
-        makedirs(file_paths[1])
-        copyfile(source, destination)
-        if permissions is not None:
-            chmod(destination, permissions)
+    install_files(files)
     # Finally, package our files.
-    dpkg_cmd = f"dpkg-deb --build {temp_package_dir}"
-    dpkg_process = subprocess.Popen(dpkg_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    # Wait for make to finish.
-    while True:
-        line = dpkg_process.stdout.readline()
-        err =  dpkg_process.stderr.readline()
-        if err:
-            print(f"[{timestamp()}]: {bcolors.RED}{err.decode('ascii')}{bcolors.ENDC}")
-            break
-             # Should probably raise an exception here.
-        elif line == b'' and err == b'':
-            break
-    # Finally, copy the finished package to the output dir.
-    src = path.join(base_dir, temp_dir, output_package_name)
-    dest = path.join(base_dir, build_output_dir, output_package_name)
-    copyfile(src, dest)
-    print(f"[{timestamp()}]: {bcolors.GREEN}{PROJECT} version: {version} built.{bcolors.ENDC}")
+    # Finally, package our files.
+    error = create_package(output_package_name, base_dir, temp_dir, temp_package_dir, build_output_dir)
+    if error:
+        print(f"[{timestamp()}]: Build failed with error: {bcolors.RED}{error}{bcolors.ENDC}")
+    else:
+        print(f"[{timestamp()}]: {bcolors.GREEN}{PROJECT} version: {version} built.{bcolors.ENDC}")

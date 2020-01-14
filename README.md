@@ -33,3 +33,21 @@ Source repo at https://github.com/sensorgnome-org/vamp-plugins
   - libasound2-dev
 - Python:
   - gitpython
+
+### build_sensorgnome_control.py
+
+Source repo at https://github.com/sensorgnome-org/sensorgnome-control.git
+
+#### Build Dependendcies:
+
+- Python:
+  - gitpython
+
+### build_sensorgnome_support.py
+
+Source repo at https://github.com/sensorgnome-org/sensorgnome-support.git
+
+#### Build Dependendcies:
+
+- Python:
+  - gitpython
