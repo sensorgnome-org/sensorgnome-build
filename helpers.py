@@ -84,6 +84,17 @@ def recursive_chmod(base_path, permissions):
             chmod(path.join(dir_path, file), permissions)
 
 def create_package(output_package_name, base_dir, temp_dir, temp_package_dir, build_output_dir):
+    """
+    Create the package from the build artifacts from previous steps.
+    Args:
+        output_package_name (str): Full name of the output package.
+        base_dir (path): The base directory that build.py is run from.
+        temp_dir (path): The temporary directory where build artifacts are.
+        temp_package_dir (path): The directory where all the files needed for packaging live, in their proper structure for a .deb package.
+        build_output_dir (path): The directory where the finished package should be output.
+    Returns:
+        bool: False if no errors occurred, otherwise an error message. In this case, the error message is straight from dpkg-deb if one occurs.
+    """
     dpkg_cmd = f"dpkg-deb --build {temp_package_dir}"
     dpkg_process = subprocess.Popen(dpkg_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # Wait for dpkg-deb to finish.
