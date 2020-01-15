@@ -51,3 +51,23 @@ Source repo at https://github.com/sensorgnome-org/sensorgnome-support.git
 
 - Python:
   - gitpython
+
+### build_openssh_portable.py
+
+Source repo at https://github.com/sensorgnome-org/sensorgnome-openssh-portable.git
+
+Builds that patched version of OpenSSH portable that SensorGnome currently uses.
+
+#### Build Dependendcies:
+
+- Debian:
+  - libssl-dev
+  - autoconf
+  - zlib1g
+  - zlib1g-dev
+- Python:
+  - gitpython
+
+#### Notes
+
+This version of OpenSSH is very, very out of date.
