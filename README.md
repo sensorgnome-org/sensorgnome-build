@@ -71,3 +71,19 @@ Builds that patched version of OpenSSH portable that SensorGnome currently uses.
 #### Notes
 
 This version of OpenSSH is very, very out of date.
+
+### build_sensorgnome_librtlsdr.py
+
+Source repo at https://github.com/sensorgnome-org/sensorgnome-librtlsdr.git
+
+Builds the patched version of librtlsdr that SensorGnome currently uses.
+
+#### Build Dependendcies:
+
+- Debian:
+  - libusb-1.0-0
+  - libusb-1.0-0-dev
+  - autoconf
+  - libtool
+- Python:
+  - gitpython
