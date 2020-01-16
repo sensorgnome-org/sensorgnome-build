@@ -8,6 +8,7 @@ import build_sensorgnome_control as sg_control
 import build_sensorgnome_support as sg_support
 import build_openssh_portable as openssh
 import build_sensorgnome_librtlsdr as sg_librtlsdr
+import build_fcd as fcd
 
 
 if __name__ == "__main__":
@@ -40,4 +41,6 @@ if __name__ == "__main__":
     openssh.build(temp_dir, build_dir, openssh_version)
     sg_librtlsdr_version = "0.5-1"
     sg_librtlsdr.build(temp_dir, build_dir, sg_librtlsdr_version)
+    fcd_version = "0.5-1"
+    fcd.build(temp_dir, build_dir, fcd_version)
     print(f"[{timestamp()}]: Sensorgnome software packages successfully built.")
