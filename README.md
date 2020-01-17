@@ -87,3 +87,16 @@ Builds the patched version of librtlsdr that SensorGnome currently uses.
   - libtool
 - Python:
   - gitpython
+
+### build_find_tags.py
+
+Source repo at https://github.com/sensorgnome-org/find_tags.git
+
+Builds the `find_tags_unifile` branch for running on the SensorGnome.
+
+#### Build Dependendcies:
+
+- Debian:
+  - libsqlite3-dev
+- Python:
+  - gitpython
