@@ -4,6 +4,10 @@
 
 Run build.py to create output packages in a new folder at `output/`.
 
+Note that the `build-essential` Debian package needs to be installed to build all of the packages.
+
+The `gitpython` Python package is also used in all build scripts.
+
 ### build_vamp_alsa_host.py
 
 Source repo at https://github.com/sensorgnome-org/vamp-alsa-host
@@ -16,8 +20,6 @@ Source repo at https://github.com/sensorgnome-org/vamp-alsa-host
   - vamp-plugin-sdk
   - libboost-all-dev
   - libasound2-dev
-- Python:
-  - gitpython
 
 ### build_vamp_plugins.py
 
@@ -31,8 +33,6 @@ Source repo at https://github.com/sensorgnome-org/vamp-plugins
   - vamp-plugin-sdk
   - libboost-all-dev
   - libasound2-dev
-- Python:
-  - gitpython
 
 ### build_sensorgnome_control.py
 
@@ -40,8 +40,7 @@ Source repo at https://github.com/sensorgnome-org/sensorgnome-control.git
 
 #### Build Dependendcies:
 
-- Python:
-  - gitpython
+No additional.
 
 ### build_sensorgnome_support.py
 
@@ -49,8 +48,7 @@ Source repo at https://github.com/sensorgnome-org/sensorgnome-support.git
 
 #### Build Dependendcies:
 
-- Python:
-  - gitpython
+No additional.
 
 ### build_openssh_portable.py
 
@@ -65,8 +63,6 @@ Builds that patched version of OpenSSH portable that SensorGnome currently uses.
   - autoconf
   - zlib1g
   - zlib1g-dev
-- Python:
-  - gitpython
 
 #### Notes
 
@@ -85,8 +81,15 @@ Builds the patched version of librtlsdr that SensorGnome currently uses.
   - libusb-1.0-0-dev
   - autoconf
   - libtool
-- Python:
-  - gitpython
+
+### build_fcd.py
+
+Source repo at https://github.com/sensorgnome-org/fcd.git
+
+
+#### Build Dependendcies:
+
+No additional.
 
 ### build_find_tags.py
 
@@ -98,5 +101,3 @@ Builds the `find_tags_unifile` branch for running on the SensorGnome.
 
 - Debian:
   - libsqlite3-dev
-- Python:
-  - gitpython
