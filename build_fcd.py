@@ -10,7 +10,7 @@ PROJECT = "fcd"
 REPO = "https://github.com/sensorgnome-org/fcd.git"
 
 
-def build(temp_dir, build_output_dir, version):
+def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip"):
     base_dir = getcwd()
     print(f"[{timestamp()}]: Starting build of {PROJECT}.")
 
@@ -20,12 +20,14 @@ def build(temp_dir, build_output_dir, version):
     print(f"[{timestamp()}]: Starting make.")
     build_dir = path.join(base_dir, temp_dir, PROJECT)
     chdir(build_dir)
-    make_process = subprocess.Popen("make clean all", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if compiler:
+        compiler = f"CXX={compiler}"
+    make_process = subprocess.Popen(f"make clean all {compiler}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # Wait for make to finish. Maybe change to use poll()
     while make_process.stdout.readline() or make_process.stderr.readline():
         pass
     # Strip binary files.
-    _ = subprocess.Popen(["strip", "fcd"])
+    _ = subprocess.Popen([f"{strip_bin}", "fcd"])
     chdir(base_dir)
     
     output_package_name = f"{PROJECT}_{version}.deb"
