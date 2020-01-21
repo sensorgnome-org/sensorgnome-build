@@ -11,7 +11,7 @@ REPO = "https://github.com/sensorgnome-org/find_tags.git"
 BRANCH = "find_tags_unifile"
 
 
-def build(temp_dir, build_output_dir, version):
+def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip"):
     base_dir = getcwd()
     build_dir = path.join(base_dir, temp_dir, PROJECT)
     print(f"[{timestamp()}]: Starting build of {PROJECT}.")
@@ -23,12 +23,14 @@ def build(temp_dir, build_output_dir, version):
 
     print(f"[{timestamp()}]: Starting make.")
     chdir(build_dir)
-    make_process = subprocess.Popen("make clean all", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if compiler:
+        compiler = f"CXX={compiler}"
+    make_process = subprocess.Popen(f"make clean all {compiler}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # Wait for make to finish. Maybe change to use poll()
     while make_process.stdout.readline() or make_process.stderr.readline():
         pass
     # Strip binary files.
-    _ = subprocess.Popen(["strip", "find_tags_unifile"])
+    _ = subprocess.Popen([f"{strip_bin}", "find_tags_unifile"])
     chdir(base_dir)
     
     output_package_name = f"{PROJECT}_{version}.deb"

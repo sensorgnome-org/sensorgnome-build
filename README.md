@@ -2,9 +2,19 @@
 
 ## Package Building
 
-Run build.py to create output packages in a new folder at `output/`.
+Run build.py to create output packages.
 
-Note that the `build-essential` Debian package needs to be installed to build all of the packages.
+### build.py switches:
+
+- `-c`/`--c-compiler`: Optionally set non-standard C compiler, useful for cross-compilation.
+- `-x`/`--cpp-compiler`: Optionally set non-standard C++ compiler, useful for cross-compilation.
+- `-s`/`--strip`: Optionally set non-standard strip binary, useful for cross-compilation.
+- `-t`/`--temp`: Temp directory to store build files and artifacts in.
+- `-o`/`--output`:  Directory to output finished debian pagkages.
+
+### Dependencies
+
+Note that the `build-essential` Debian package needs to be installed to build all of the packages. Same with Python, Debian package `python3`.
 
 The `gitpython` Python package is also used in all build scripts.
 

@@ -10,7 +10,7 @@ PROJECT = "sensorgnome-support"
 REPO = "https://github.com/sensorgnome-org/sensorgnome-support.git"
 
 
-def build(temp_dir, build_output_dir, version):
+def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip"):
     base_dir = getcwd()
     print(f"[{timestamp()}]: Starting build of {PROJECT}.")
 
