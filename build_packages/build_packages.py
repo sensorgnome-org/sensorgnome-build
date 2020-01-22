@@ -2,7 +2,7 @@ from os import mkdir, rmdir
 from shutil import rmtree
 import argparse
 
-from helpers import bcolors, timestamp
+from package_helpers import bcolors, timestamp
 import package_vamp_alsa_host as vamp_alsa_host
 import package_vamp_plugins as vamp_plugins
 import package_sensorgnome_control as sg_control
