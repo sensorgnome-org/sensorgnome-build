@@ -1,4 +1,4 @@
-# Tools to build Sensorgnome Images and Packages
+# Build Debian Packages of all Sensorgnome Software
 
 ## Package Building
 
@@ -18,7 +18,7 @@ Note that the `build-essential` Debian package needs to be installed to build al
 
 The `gitpython` Python package is also used in all build scripts.
 
-### build_vamp_alsa_host.py
+### package_vamp_alsa_host.py
 
 Source repo at https://github.com/sensorgnome-org/vamp-alsa-host
 
@@ -31,7 +31,7 @@ Source repo at https://github.com/sensorgnome-org/vamp-alsa-host
   - libboost-all-dev
   - libasound2-dev
 
-### build_vamp_plugins.py
+### package_vamp_plugins.py
 
 Source repo at https://github.com/sensorgnome-org/vamp-plugins
 
@@ -44,7 +44,7 @@ Source repo at https://github.com/sensorgnome-org/vamp-plugins
   - libboost-all-dev
   - libasound2-dev
 
-### build_sensorgnome_control.py
+### package_sensorgnome_control.py
 
 Source repo at https://github.com/sensorgnome-org/sensorgnome-control.git
 
@@ -52,7 +52,7 @@ Source repo at https://github.com/sensorgnome-org/sensorgnome-control.git
 
 No additional.
 
-### build_sensorgnome_support.py
+### package_sensorgnome_support.py
 
 Source repo at https://github.com/sensorgnome-org/sensorgnome-support.git
 
@@ -60,7 +60,7 @@ Source repo at https://github.com/sensorgnome-org/sensorgnome-support.git
 
 No additional.
 
-### build_openssh_portable.py
+### package_openssh_portable.py
 
 Source repo at https://github.com/sensorgnome-org/sensorgnome-openssh-portable.git
 
@@ -78,7 +78,7 @@ Builds that patched version of OpenSSH portable that SensorGnome currently uses.
 
 This version of OpenSSH is very, very out of date.
 
-### build_sensorgnome_librtlsdr.py
+### package_sensorgnome_librtlsdr.py
 
 Source repo at https://github.com/sensorgnome-org/sensorgnome-librtlsdr.git
 
@@ -92,7 +92,7 @@ Builds the patched version of librtlsdr that SensorGnome currently uses.
   - autoconf
   - libtool
 
-### build_fcd.py
+### package_fcd.py
 
 Source repo at https://github.com/sensorgnome-org/fcd.git
 
@@ -101,7 +101,7 @@ Source repo at https://github.com/sensorgnome-org/fcd.git
 
 No additional.
 
-### build_find_tags.py
+### package_find_tags.py
 
 Source repo at https://github.com/sensorgnome-org/find_tags.git
 
