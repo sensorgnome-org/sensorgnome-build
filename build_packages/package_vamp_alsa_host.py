@@ -4,7 +4,7 @@ import subprocess
 import sys
 from os import mkdir, chdir, getcwd, path
 from shutil import copyfile
-from helpers import timestamp, bcolors, install_files, create_package
+from package_helpers import timestamp, bcolors, install_files, create_package
 
 PROJECT = "vamp-alsa-host"
 REPO = "https://github.com/sensorgnome-org/vamp-alsa-host"

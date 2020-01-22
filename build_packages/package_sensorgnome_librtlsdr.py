@@ -4,10 +4,10 @@ import subprocess
 import sys
 from os import mkdir, chdir, getcwd, path
 from shutil import copyfile
-from helpers import timestamp, bcolors, install_files, create_package
+from package_helpers import timestamp, bcolors, install_files, create_package
 
-PROJECT = "sensorgnome-openssh-portable"
-REPO = "https://github.com/sensorgnome-org/sensorgnome-openssh-portable.git"
+PROJECT = "sensorgnome-librtlsdr"
+REPO = "https://github.com/sensorgnome-org/sensorgnome-librtlsdr.git"
 
 
 def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip"):
@@ -23,7 +23,7 @@ def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip")
     # Create temporary packaging directory.
     temp_package_dir = path.join(base_dir, temp_dir, f"{PROJECT}_{version}")
     mkdir(temp_package_dir)
-    autoreconf_process = subprocess.Popen("autoreconf", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    autoreconf_process = subprocess.Popen("autoreconf -i", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # Wait for autoreconf to finish running.
     while autoreconf_process.stdout.readline() or autoreconf_process.stderr.readline():
         pass
@@ -36,6 +36,10 @@ def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip")
     make_process = subprocess.Popen(f"make install DESTDIR={temp_package_dir} {compiler}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # Wait for make to finish. Maybe change to use poll()
     while make_process.stdout.readline() or make_process.stderr.readline():
+        pass
+    libtool_process = subprocess.Popen(f"libtool --finish {temp_package_dir}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # Wait for libtool to finish.
+    while libtool_process.stdout.readline() or libtool_process.stderr.readline():
         pass
     chdir(base_dir)
     
@@ -51,7 +55,7 @@ def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip")
         "Essential": "yes",
         "Depends": "",
         "Maintainer": "Dale Floer <dalefloer@gmail.com>",
-        "Description": "Patched version of OpenSSH to allow single mapped ports in config files.",
+        "Description": "Patched version of librtlsdr with SensorGnome enhancements.",
         }
     output = '\n'.join([f"{k}: {v}" for k, v in template.items()])
     output += '\n'  # Final newline needed at end of file.

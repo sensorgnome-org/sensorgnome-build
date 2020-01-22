@@ -4,33 +4,30 @@ import subprocess
 import sys
 from os import mkdir, chdir, getcwd, path
 from shutil import copyfile
-from helpers import timestamp, bcolors, install_files, create_package
+from package_helpers import timestamp, bcolors, install_files, create_package
 
-PROJECT = "find_tags"
-REPO = "https://github.com/sensorgnome-org/find_tags.git"
-BRANCH = "find_tags_unifile"
+PROJECT = "vamp-plugins"
+REPO = "https://github.com/sensorgnome-org/vamp-plugins.git"
 
 
 def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip"):
     base_dir = getcwd()
-    build_dir = path.join(base_dir, temp_dir, PROJECT)
     print(f"[{timestamp()}]: Starting build of {PROJECT}.")
 
     print(f"[{timestamp()}]: Git clone from {REPO}.")
     git.Git(path.join(base_dir, temp_dir)).clone(REPO)
-    print(f"[{timestamp()}]: Git checkout branch {BRANCH}.")
-    git.Git(build_dir).checkout(BRANCH)
 
     print(f"[{timestamp()}]: Starting make.")
+    build_dir = path.join(base_dir, temp_dir, PROJECT, "lotek")
     chdir(build_dir)
     if compiler:
         compiler = f"CXX={compiler}"
-    make_process = subprocess.Popen(f"make clean all {compiler}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    make_process = subprocess.Popen("make clean lotek-plugins.so {compiler};", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # Wait for make to finish. Maybe change to use poll()
     while make_process.stdout.readline() or make_process.stderr.readline():
         pass
     # Strip binary files.
-    _ = subprocess.Popen([f"{strip_bin}", "find_tags_unifile"])
+    _ = subprocess.Popen(["strip", "lotek-plugins.so"])
     chdir(base_dir)
     
     output_package_name = f"{PROJECT}_{version}.deb"
@@ -41,15 +38,14 @@ def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip")
     deb_metadata_dir = path.join(build_dir, temp_package_dir, "DEBIAN")
     mkdir(deb_metadata_dir)
     # Create control file, metadata needed for each .deb package.
-    deb_protect_name = PROJECT.replace('_', '-')  # Debian doesn't allow packages with _ in the name.
     template = {
-        "Package": deb_protect_name,
+        "Package": PROJECT,
         "Version": version,
         "Architecture": "armhf",
         "Essential": "yes",
-        "Depends": "",
+        "Depends": "libboost-filesystem-dev, libboost-system-dev, libboost-thread-dev, libasound2-dev, libvamp-hostsdk3v5, libfftw3-dev",
         "Maintainer": "Dale Floer <dalefloer@gmail.com>",
-        "Description": "Sensorgnome software to filter Lotek tags from a raw datastream.",
+        "Description": "VAMP plugin for detecting VHF pulses from Lotek tags for Sensorgnome.",
         }
     output = '\n'.join([f"{k}: {v}" for k, v in template.items()])
     output += '\n'  # Final newline needed at end of file.
@@ -58,7 +54,7 @@ def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip")
             f.write(x)
     # Copy files to where they should go.
     files = {
-        "find_tags_unifile": [build_dir, path.join(temp_package_dir, "home", "pi", "proj", "find_tags"), 0o755],
+        "lotek-plugins.so": [build_dir, path.join(temp_package_dir, "home", "pi", "vamp"), 0o755],
         }
     install_files(files)
     # Finally, package our files.

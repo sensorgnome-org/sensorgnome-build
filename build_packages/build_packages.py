@@ -2,15 +2,15 @@ from os import mkdir, rmdir
 from shutil import rmtree
 import argparse
 
-from helpers import bcolors, timestamp
-import build_vamp_alsa_host as vamp_alsa_host
-import build_vamp_plugins as vamp_plugins
-import build_sensorgnome_control as sg_control
-import build_sensorgnome_support as sg_support
-import build_openssh_portable as openssh
-import build_sensorgnome_librtlsdr as sg_librtlsdr
-import build_fcd as fcd
-import build_find_tags as find_tags
+from package_helpers import bcolors, timestamp
+import package_vamp_alsa_host as vamp_alsa_host
+import package_vamp_plugins as vamp_plugins
+import package_sensorgnome_control as sg_control
+import package_sensorgnome_support as sg_support
+import package_openssh_portable as openssh
+import package_sensorgnome_librtlsdr as sg_librtlsdr
+import package_fcd as fcd
+import package_find_tags as find_tags
 
 def parse_command_line():
     parser = argparse.ArgumentParser()

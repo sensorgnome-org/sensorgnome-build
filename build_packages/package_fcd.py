@@ -4,10 +4,10 @@ import subprocess
 import sys
 from os import mkdir, chdir, getcwd, path
 from shutil import copyfile
-from helpers import timestamp, bcolors, install_files, create_package
+from package_helpers import timestamp, bcolors, install_files, create_package
 
-PROJECT = "sensorgnome-librtlsdr"
-REPO = "https://github.com/sensorgnome-org/sensorgnome-librtlsdr.git"
+PROJECT = "fcd"
+REPO = "https://github.com/sensorgnome-org/fcd.git"
 
 
 def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip"):
@@ -20,31 +20,21 @@ def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip")
     print(f"[{timestamp()}]: Starting make.")
     build_dir = path.join(base_dir, temp_dir, PROJECT)
     chdir(build_dir)
-    # Create temporary packaging directory.
-    temp_package_dir = path.join(base_dir, temp_dir, f"{PROJECT}_{version}")
-    mkdir(temp_package_dir)
-    autoreconf_process = subprocess.Popen("autoreconf -i", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    # Wait for autoreconf to finish running.
-    while autoreconf_process.stdout.readline() or autoreconf_process.stderr.readline():
-        pass
-    configure_process = subprocess.Popen("./configure", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    # Wait for configure to finish running.
-    while configure_process.stdout.readline() or configure_process.stderr.readline():
-        pass
     if compiler:
         compiler = f"CXX={compiler}"
-    make_process = subprocess.Popen(f"make install DESTDIR={temp_package_dir} {compiler}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    make_process = subprocess.Popen(f"make clean all {compiler}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # Wait for make to finish. Maybe change to use poll()
     while make_process.stdout.readline() or make_process.stderr.readline():
         pass
-    libtool_process = subprocess.Popen(f"libtool --finish {temp_package_dir}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    # Wait for libtool to finish.
-    while libtool_process.stdout.readline() or libtool_process.stderr.readline():
-        pass
+    # Strip binary files.
+    _ = subprocess.Popen([f"{strip_bin}", "fcd"])
     chdir(base_dir)
     
     output_package_name = f"{PROJECT}_{version}.deb"
     print(f"[{timestamp()}]: Creating debian package at \"{path.join(build_output_dir, output_package_name)}\".")
+    # Create temporary packaging directory.
+    temp_package_dir = path.join(base_dir, temp_dir, f"{PROJECT}_{version}")
+    mkdir(temp_package_dir)
     deb_metadata_dir = path.join(build_dir, temp_package_dir, "DEBIAN")
     mkdir(deb_metadata_dir)
     # Create control file, metadata needed for each .deb package.
@@ -55,14 +45,18 @@ def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip")
         "Essential": "yes",
         "Depends": "",
         "Maintainer": "Dale Floer <dalefloer@gmail.com>",
-        "Description": "Patched version of librtlsdr with SensorGnome enhancements.",
+        "Description": "Control program to set options and update firmware on FuneCube Dongles.",
         }
     output = '\n'.join([f"{k}: {v}" for k, v in template.items()])
     output += '\n'  # Final newline needed at end of file.
     with open(deb_metadata_dir + "/control", 'w') as f:
         for x in output:
             f.write(x)
-    # Don't need to copy files as they're already done in the makefile for the project.
+    # Copy files to where they should go.
+    files = {
+        "fcd": [build_dir, path.join(temp_package_dir, "usr", "bin"), 0o755],
+        }
+    install_files(files)
     # Finally, package our files.
     error = create_package(output_package_name, base_dir, temp_dir, temp_package_dir, build_output_dir)
     if error:
