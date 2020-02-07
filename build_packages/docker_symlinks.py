@@ -32,5 +32,5 @@ if __name__ == "__main__":
     ls = listdir(lib_symlink_src_2)
     to_link = [x for x in ls for y in libs_symlinks if y in x]
     for x in to_link:
-        _ = subprocess.Popen(["ln", "-s", f"{lib_symlink_src + x}", f"{lib_symlink_dest}"])
+        _ = subprocess.Popen(["ln", "-s", f"{lib_symlink_src_2 + x}", f"{lib_symlink_dest}"])
         # print(x)

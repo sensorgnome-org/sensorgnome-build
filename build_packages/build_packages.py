@@ -62,8 +62,8 @@ if __name__ == "__main__":
     # build_success = openssh.build(temp_dir, build_dir, openssh_version, cpp_compiler, strip_bin)
     # sg_librtlsdr_version = "0.5-1"
     # build_success = sg_librtlsdr.build(temp_dir, build_dir, sg_librtlsdr_version, cpp_compiler, strip_bin)
-    # fcd_version = "0.5-1"
-    # build_success = fcd.build(temp_dir, build_dir, fcd_version, c_compiler, strip_bin)
+    fcd_version = "0.5-1"
+    build_success = fcd.build(temp_dir, build_dir, fcd_version, c_compiler, strip_bin)
     # find_tags_version = "0.5-1"
     # build_success = find_tags.build(temp_dir, build_dir, find_tags_version)
     if build_success:
