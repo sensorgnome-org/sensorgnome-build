@@ -81,3 +81,41 @@ def create_package(output_package_name, base_dir, temp_dir, temp_package_dir, bu
     dest = path.join(base_dir, build_output_dir, output_package_name)
     copyfile(src, dest)
     return False
+
+def make_subprocess(make_command, show_debug="no", errors="console"):
+    """
+    Runs make in a subprocess given a command. Can optionally show debug info and errors.
+    Args:
+        make_command (str): Command to pass to make.
+        show_debug (str, optional): Whether or not to show debug information. Defaults to no.
+            Three possible values, "no" shows no debug into, "console" prints to stdout, and "file" (currently not implememented) writes to a log file.
+        errors (str, optional): Wheter ot not to show errors. Defaults to "show".
+            Three possible values, "no" effectively ignores errors, "console" prints to stdout and file (not implemented yet) writes to a lot file.
+    Returns:
+        Tuple, with the first being a bool that's true if no errors happened and the second being a dict of {"debug": str, "error": str} data.
+    """
+    debug = f"Running '{make_command}'.\n"
+    error = ''
+    if show_debug == "file" or errors == "file":
+        raise NotImplementedError
+    elif show_debug == "console":
+        print(debug, end='')
+    make_process = subprocess.Popen(f"{make_command}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # Wait for make to finish. Maybe change to use poll()
+    while True:
+        out = make_process.stdout.readline().decode("ascii")
+        err = make_process.stderr.readline().decode("ascii")
+        if not out and not err:
+            break
+        elif err:
+            if errors == "console":
+                print(f"{bcolors.RED}{err}{bcolors.ENDC}", end='')
+            error += err
+        else:
+            if show_debug == "console":
+                print(f"{out}", end='')
+            debug += out
+    res = True
+    if error != '':
+        res = False
+    return res, {"debug": debug, "error": error}

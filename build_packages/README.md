@@ -1,5 +1,18 @@
 # Build Debian Packages of all Sensorgnome Software
 
+## Docker Package Crosscompiling and Package Build
+
+Work in progress. Essential steps are:
+- Clone dockcross from GitHub: `git clone https://github.com/dockcross/dockcross.git`
+- Patch dockcross files to support modern GCC.
+- Run `make linux-armv7-hf` to build dockcross/linux-armv7-hf container.
+  - This step can take some serious time.
+  - If you get an error about being out of space, increase the size of Docker's volumes by adding `{"storage-opts": ["dm.basesize=64G"]}` to `/etc/docker/daemon.json`. GCC is pretty large and needs more than the default 10GB of space. 64GB is way more than needed. **This may delete any existing containers/images.**
+- Run `docker build -t dockcross/linux-arm7-hf .` with the Dockerfile included in this project.
+- Run `docker run sensorgnome-armv7-hf > linux-armv7-hf` to create an bash script that sets up and runs dockcross.
+- Make the script executable `chmod +x ./linux-armv7-hf`.
+- Now cross-compiling should be working. 
+
 ## Package Building
 
 Run build_packages.py to create output packages.
@@ -14,7 +27,7 @@ Run build_packages.py to create output packages.
 
 ### Dependencies
 
-Note that the `build-essential` Debian package needs to be installed to build all of the packages. Same with Python, Debian package `python3`.
+Note that the `build-essential` Debian package needs to be installed to build all of the packages. Same with Python, Debian package `python3`, version 3.6 or greater
 
 The `gitpython` Python package is also used in all build scripts.
 
@@ -28,8 +41,9 @@ Source repo at https://github.com/sensorgnome-org/vamp-alsa-host
   - libfftw3-3
   - libfftw3-dev
   - vamp-plugin-sdk
-  - libboost-all-dev
+  - libboost-dev
   - libasound2-dev
+  - libvamp-hostsdk3v5
 
 ### package_vamp_plugins.py
 
@@ -41,7 +55,7 @@ Source repo at https://github.com/sensorgnome-org/vamp-plugins
   - libfftw3-3
   - libfftw3-dev
   - vamp-plugin-sdk
-  - libboost-all-dev
+  - libboost-dev
   - libasound2-dev
 
 ### package_sensorgnome_control.py
