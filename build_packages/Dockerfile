@@ -19,6 +19,7 @@ RUN dpkg --add-architecture armhf && apt-get update \
     autoconf:armhf \
     libtool:armhf \
     libsqlite3-dev:armhf \
+    libsqlite3-0:armhf \
     libvamp-hostsdk3v5:armhf \
     libhwloc-plugins:armhf \
     libmpdec2 \

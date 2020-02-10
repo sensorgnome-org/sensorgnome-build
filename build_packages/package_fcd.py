@@ -23,7 +23,7 @@ def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip")
     if compiler:
         compiler = f"CXX={compiler}"
     make_command = f"make clean all {compiler}"
-    success, info = make_subprocess(make_command, show_debug="console", errors="console")
+    success, info = make_subprocess(make_command, show_debug="no", errors="console")
     if not success:
         print(f"[{timestamp()}]: Build failed with error: {bcolors.RED}\n{info['error']}{bcolors.ENDC}")
         return False

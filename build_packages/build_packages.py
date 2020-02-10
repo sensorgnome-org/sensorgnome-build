@@ -53,19 +53,19 @@ if __name__ == "__main__":
     vamp_alsa_host_version = "0.5-1"
     build_success = vamp_alsa_host.build(temp_dir, build_dir, vamp_alsa_host_version, cpp_compiler, strip_bin)
     vamp_plugins_version = "0.5-1"
-    # build_success = vamp_plugins.build(temp_dir, build_dir, vamp_plugins_version, cpp_compiler, strip_bin)
-    # sg_control_version = "0.5-1"
-    # build_success = sg_control.build(temp_dir, build_dir, sg_control_version, cpp_compiler, strip_bin)
-    # sg_support_version = "0.5-1"
-    # build_success = sg_support.build(temp_dir, build_dir, sg_support_version, cpp_compiler, strip_bin)
-    # openssh_version = "0.5-1"
-    # build_success = openssh.build(temp_dir, build_dir, openssh_version, cpp_compiler, strip_bin)
-    # sg_librtlsdr_version = "0.5-1"
-    # build_success = sg_librtlsdr.build(temp_dir, build_dir, sg_librtlsdr_version, cpp_compiler, strip_bin)
+    build_success = vamp_plugins.build(temp_dir, build_dir, vamp_plugins_version, cpp_compiler, strip_bin)
+    sg_control_version = "0.5-1"
+    build_success = sg_control.build(temp_dir, build_dir, sg_control_version, cpp_compiler, strip_bin)
+    sg_support_version = "0.5-1"
+    build_success = sg_support.build(temp_dir, build_dir, sg_support_version, cpp_compiler, strip_bin)
+    openssh_version = "0.5-1"
+    build_success = openssh.build(temp_dir, build_dir, openssh_version, cpp_compiler, strip_bin)
+    sg_librtlsdr_version = "0.5-1"
+    build_success = sg_librtlsdr.build(temp_dir, build_dir, sg_librtlsdr_version, cpp_compiler, strip_bin)
     fcd_version = "0.5-1"
     build_success = fcd.build(temp_dir, build_dir, fcd_version, c_compiler, strip_bin)
-    # find_tags_version = "0.5-1"
-    # build_success = find_tags.build(temp_dir, build_dir, find_tags_version)
+    find_tags_version = "0.5-1"
+    build_success = find_tags.build(temp_dir, build_dir, find_tags_version, cpp_compiler, strip_bin)
     if build_success:
         print(f"[{timestamp()}]: {bcolors.GREEN}Sensorgnome software packages successfully built.{bcolors.ENDC}")
     else:

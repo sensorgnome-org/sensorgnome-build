@@ -28,7 +28,7 @@ def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip")
         print(f"[{timestamp()}]: Build failed with error: {bcolors.RED}\n{info['error']}{bcolors.ENDC}")
         return False
     # Strip binary files.
-    _ = subprocess.Popen(["strip", "vamp-alsa-host"])
+    _ = subprocess.Popen([f"{strip_bin}", "vamp-alsa-host"])
     chdir(base_dir)
     
     output_package_name = f"{PROJECT}_{version}.deb"

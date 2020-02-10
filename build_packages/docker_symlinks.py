@@ -7,9 +7,9 @@ if __name__ == "__main__":
     Simple script to create the symlinks needed for building using crosstool-ng in the Docker container.
     """
     # These are the directories (trailing /) or files to symlink.
-    include_symlinks = ["vamp-hostsdk/", "vamp-sdk/", "vamp/", "alsa/", "boost/", "fftw3.h"]
+    include_symlinks = ["vamp-hostsdk/", "vamp-sdk/", "vamp/", "alsa/", "boost/", "fftw3.h", "sqlite3.h", "vamp/vamp.h"]
     # These are the libraries we want to match. This is set up this way so that, for example, "libasound" matches "libasound.so" and "libasound.so.1" etc.
-    libs_symlinks = ["libfftw3", "libvamp", "libasound", "libboost_", "libusb", "libudev"]
+    libs_symlinks = ["libfftw3", "libvamp", "libasound", "libboost_", "libusb", "libudev", "libsqlite3"]
 
     include_symlink_dest = "/usr/xcc/armv7-unknown-linux-gnueabihf/lib/gcc/armv7-unknown-linux-gnueabihf/8.3.0/include/"
     include_symlink_src = "/usr/include/"
