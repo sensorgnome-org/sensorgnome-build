@@ -1,4 +1,4 @@
-from os import chdir, makedirs, path, chmod, walk
+from os import chdir, makedirs, path, chmod, walk, environ
 from shutil import copyfile, copytree
 import subprocess
 
@@ -94,28 +94,23 @@ def make_subprocess(make_command, show_debug="no", errors="console"):
     Returns:
         Tuple, with the first being a bool that's true if no errors happened and the second being a dict of {"debug": str, "error": str} data.
     """
+    env = environ.copy()    
     debug = f"Running '{make_command}'.\n"
     error = ''
     if show_debug == "file" or errors == "file":
         raise NotImplementedError
     elif show_debug == "console":
         print(debug, end='')
-    make_process = subprocess.Popen(f"{make_command}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    # Wait for make to finish. Maybe change to use poll()
-    while True:
-        out = make_process.stdout.readline().decode("ascii")
-        err = make_process.stderr.readline().decode("ascii")
-        if not out and not err:
-            break
-        elif err:
-            if errors == "console":
-                print(f"{bcolors.RED}{err}{bcolors.ENDC}", end='')
-            error += err
-        else:
-            if show_debug == "console":
-                print(f"{out}", end='')
-            debug += out
+    make_process = subprocess.Popen(f"{make_command}", env=env, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, err = make_process.communicate()
+    exit_code = make_process.wait()
+    debug += out.decode("ascii")
+    error += err.decode("ascii")
+    if show_debug == "console":
+        print(debug)
+    if errors == "conole":
+        print(error)
     res = True
-    if error != '':
+    if exit_code != 0:
         res = False
     return res, {"debug": debug, "error": error}
