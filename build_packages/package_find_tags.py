@@ -11,7 +11,7 @@ REPO = "https://github.com/sensorgnome-org/find_tags.git"
 BRANCH = "find_tags_unifile"
 
 
-def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip"):
+def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip", host=''):
     base_dir = getcwd()
     build_dir = path.join(base_dir, temp_dir, PROJECT)
     print(f"[{timestamp()}]: Starting build of {PROJECT}.")

@@ -10,7 +10,7 @@ PROJECT = "vamp-plugins"
 REPO = "https://github.com/sensorgnome-org/vamp-plugins.git"
 
 
-def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip"):
+def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip", host=''):
     base_dir = getcwd()
     print(f"[{timestamp()}]: Starting build of {PROJECT}.")
 
@@ -30,7 +30,7 @@ def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip")
     # Strip binary files.
     _ = subprocess.Popen([f"{strip_bin}", "lotek-plugins.so"])
     chdir(base_dir)
-    
+
     output_package_name = f"{PROJECT}_{version}.deb"
     print(f"[{timestamp()}]: Creating debian package at \"{path.join(build_output_dir, output_package_name)}\".")
     # Create temporary packaging directory.

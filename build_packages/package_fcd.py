@@ -10,7 +10,7 @@ PROJECT = "fcd"
 REPO = "https://github.com/sensorgnome-org/fcd.git"
 
 
-def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip"):
+def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip", host=''):
     base_dir = getcwd()
     print(f"[{timestamp()}]: Starting build of {PROJECT}.")
 
