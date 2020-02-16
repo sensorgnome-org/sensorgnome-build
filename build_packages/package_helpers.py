@@ -1,4 +1,4 @@
-from os import chdir, makedirs, path, chmod, walk, environ
+from os import chdir, makedirs, path, chmod, walk
 from shutil import copyfile, copytree
 import subprocess
 
@@ -10,7 +10,7 @@ from helpers import *
 The purpose of this file is to contain helper functions used elsewhere.
 """
 
-    
+
 def install_files(files):
     """
     Install files given in the files dict to their locations relative to base_dir.
@@ -41,7 +41,7 @@ def install_files(files):
             copytree(source, destination)
         if permissions is not None:  # Permissions are not supported for multiple files right now.
             recursive_chmod(destination, permissions)
-            
+
 def recursive_chmod(base_path, permissions):
     """
     Recursively chmod files and directories from the given base path, including the root.
@@ -94,14 +94,13 @@ def make_subprocess(make_command, show_debug="no", errors="console"):
     Returns:
         Tuple, with the first being a bool that's true if no errors happened and the second being a dict of {"debug": str, "error": str} data.
     """
-    env = environ.copy()    
     debug = f"Running '{make_command}'.\n"
     error = ''
     if show_debug == "file" or errors == "file":
         raise NotImplementedError
     elif show_debug == "console":
         print(debug, end='')
-    make_process = subprocess.Popen(f"{make_command}", env=env, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    make_process = subprocess.Popen(f"{make_command}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = make_process.communicate()
     exit_code = make_process.wait()
     debug += out.decode("ascii")
