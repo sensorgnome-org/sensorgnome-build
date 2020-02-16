@@ -65,8 +65,8 @@ if __name__ == "__main__":
     build_success["sensorgnome-support"] = sg_support.build(temp_dir, build_dir, sg_support_version, cpp_compiler, strip_bin, xcc_host)
     openssh_version = "0.5-1"
     build_success["sensorgnome-openssh"] = openssh.build(temp_dir, build_dir, openssh_version, cpp_compiler, strip_bin, xcc_host)
-    # sg_librtlsdr_version = "0.5-1"
-    # build_success = sg_librtlsdr.build(temp_dir, build_dir, sg_librtlsdr_version, cpp_compiler, strip_bin, xcc_host)
+    sg_librtlsdr_version = "0.5-1"
+    build_success["sensorgnome-librtlsdr"] = sg_librtlsdr.build(temp_dir, build_dir, sg_librtlsdr_version, cpp_compiler, strip_bin, xcc_host)
     fcd_version = "0.5-1"
     build_success["fcd"] = fcd.build(temp_dir, build_dir, fcd_version, c_compiler, strip_bin, xcc_host)
     find_tags_version = "0.5-1"
