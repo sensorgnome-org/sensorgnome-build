@@ -4,13 +4,13 @@ import subprocess
 import sys
 from os import mkdir, chdir, getcwd, path
 from shutil import copyfile
-from package_helpers import timestamp, bcolors, install_files, create_package
+from package_helpers import timestamp, bcolors, install_files, create_package, make_subprocess
 
 PROJECT = "vamp-plugins"
 REPO = "https://github.com/sensorgnome-org/vamp-plugins.git"
 
 
-def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip"):
+def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip", host=''):
     base_dir = getcwd()
     print(f"[{timestamp()}]: Starting build of {PROJECT}.")
 
@@ -22,14 +22,15 @@ def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip")
     chdir(build_dir)
     if compiler:
         compiler = f"CXX={compiler}"
-    make_process = subprocess.Popen("make clean lotek-plugins.so {compiler};", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    # Wait for make to finish. Maybe change to use poll()
-    while make_process.stdout.readline() or make_process.stderr.readline():
-        pass
+    make_command = f"make clean lotek-plugins.so {compiler}"
+    success, info = make_subprocess(make_command, show_debug="no", errors="console")
+    if not success:
+        print(f"[{timestamp()}]: Build failed with error: {bcolors.RED}\n{info['error']}{bcolors.ENDC}")
+        return False
     # Strip binary files.
-    _ = subprocess.Popen(["strip", "lotek-plugins.so"])
+    _ = subprocess.Popen([f"{strip_bin}", "lotek-plugins.so"])
     chdir(base_dir)
-    
+
     output_package_name = f"{PROJECT}_{version}.deb"
     print(f"[{timestamp()}]: Creating debian package at \"{path.join(build_output_dir, output_package_name)}\".")
     # Create temporary packaging directory.
@@ -61,5 +62,7 @@ def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip")
     error = create_package(output_package_name, base_dir, temp_dir, temp_package_dir, build_output_dir)
     if error:
         print(f"[{timestamp()}]: Build failed with error: {bcolors.RED}{error}{bcolors.ENDC}")
+        return False
     else:
         print(f"[{timestamp()}]: {bcolors.GREEN}{PROJECT} version: {version} built.{bcolors.ENDC}")
+        return True

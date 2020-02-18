@@ -1,5 +1,9 @@
 # Build Debian Packages of all Sensorgnome Software
 
+## Docker Package Crosscompiling and Package Build
+
+See `Docker.md` for docker specific documentation and instructions.
+
 ## Package Building
 
 Run build_packages.py to create output packages.
@@ -14,7 +18,7 @@ Run build_packages.py to create output packages.
 
 ### Dependencies
 
-Note that the `build-essential` Debian package needs to be installed to build all of the packages. Same with Python, Debian package `python3`.
+Note that the `build-essential` Debian package needs to be installed to build all of the packages. Same with Python, Debian package `python3`, version 3.6 or greater
 
 The `gitpython` Python package is also used in all build scripts.
 
@@ -28,8 +32,9 @@ Source repo at https://github.com/sensorgnome-org/vamp-alsa-host
   - libfftw3-3
   - libfftw3-dev
   - vamp-plugin-sdk
-  - libboost-all-dev
+  - libboost-dev
   - libasound2-dev
+  - libvamp-hostsdk3v5
 
 ### package_vamp_plugins.py
 
@@ -41,7 +46,7 @@ Source repo at https://github.com/sensorgnome-org/vamp-plugins
   - libfftw3-3
   - libfftw3-dev
   - vamp-plugin-sdk
-  - libboost-all-dev
+  - libboost-dev
   - libasound2-dev
 
 ### package_sensorgnome_control.py

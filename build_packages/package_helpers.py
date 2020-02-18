@@ -10,7 +10,7 @@ from helpers import *
 The purpose of this file is to contain helper functions used elsewhere.
 """
 
-    
+
 def install_files(files):
     """
     Install files given in the files dict to their locations relative to base_dir.
@@ -41,7 +41,7 @@ def install_files(files):
             copytree(source, destination)
         if permissions is not None:  # Permissions are not supported for multiple files right now.
             recursive_chmod(destination, permissions)
-            
+
 def recursive_chmod(base_path, permissions):
     """
     Recursively chmod files and directories from the given base path, including the root.
@@ -81,3 +81,35 @@ def create_package(output_package_name, base_dir, temp_dir, temp_package_dir, bu
     dest = path.join(base_dir, build_output_dir, output_package_name)
     copyfile(src, dest)
     return False
+
+def make_subprocess(make_command, show_debug="no", errors="console"):
+    """
+    Runs make in a subprocess given a command. Can optionally show debug info and errors.
+    Args:
+        make_command (str): Command to pass to make.
+        show_debug (str, optional): Whether or not to show debug information. Defaults to no.
+            Three possible values, "no" shows no debug into, "console" prints to stdout, and "file" (currently not implememented) writes to a log file.
+        errors (str, optional): Wheter ot not to show errors. Defaults to "show".
+            Three possible values, "no" effectively ignores errors, "console" prints to stdout and file (not implemented yet) writes to a lot file.
+    Returns:
+        Tuple, with the first being a bool that's true if no errors happened and the second being a dict of {"debug": str, "error": str} data.
+    """
+    debug = f"Running '{make_command}'.\n"
+    error = ''
+    if show_debug == "file" or errors == "file":
+        raise NotImplementedError
+    elif show_debug == "console":
+        print(debug, end='')
+    make_process = subprocess.Popen(f"{make_command}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, err = make_process.communicate()
+    exit_code = make_process.wait()
+    debug += out.decode("ascii")
+    error += err.decode("ascii")
+    if show_debug == "console":
+        print(debug)
+    if errors == "conole":
+        print(error)
+    res = True
+    if exit_code != 0:
+        res = False
+    return res, {"debug": debug, "error": error}
