@@ -17,7 +17,7 @@ def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip",
     print(f"[{timestamp()}]: Git clone from {REPO}.")
     git.Git(path.join(base_dir, temp_dir)).clone(REPO)
 
-    build_dir = path.join(base_dir, temp_dir, PROJECT)    
+    build_dir = path.join(base_dir, temp_dir, PROJECT)
     output_package_name = f"{PROJECT}_{version}.deb"
     print(f"[{timestamp()}]: Creating debian package at \"{path.join(build_output_dir, output_package_name)}\".")
     # Create temporary packaging directory.
@@ -31,7 +31,7 @@ def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip",
         "Version": version,
         "Architecture": "armhf",
         "Essential": "yes",
-        "Depends": "perl, awk, python, bash, libjson-perl, vsftpd, udhcpcd, autossh",
+        "Depends": "perl, awk, python, bash, libjson-perl, vsftpd, udhcpc, autossh",
         "Maintainer": "Dale Floer <dalefloer@gmail.com>",
         "Description": "Sensorgnome master control process.",
         }
@@ -51,7 +51,7 @@ def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip",
         }
     install_files(files)
     # Note: There may need to be a post-install trigger to run "udevadm control --reload-rules".
-    # However, udev should detect that the rules have been changed and reload them itself.  
+    # However, udev should detect that the rules have been changed and reload them itself.
 
     # Finally, package our files.
     error = create_package(output_package_name, base_dir, temp_dir, temp_package_dir, build_output_dir)
