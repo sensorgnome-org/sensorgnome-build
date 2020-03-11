@@ -1,6 +1,7 @@
 from pathlib import Path
 from os import getcwd, makedirs, chdir
 from shutil import copytree, copyfile, rmtree
+from distutils.dir_util import copy_tree
 import git
 import subprocess
 
@@ -21,13 +22,18 @@ def pi_gen_setup(pi_gen_tempdir, package_dir):
 
     print(f"[{timestamp()}]: Copying debian pacakges from `build_packages'.")
     sg_stage = build_dir / Path("stageSG")
-    install_packages = sg_stage / Path("00-install_packages/")
+    install_packages = sg_stage / Path("00-packages/")
     _ = copytree(package_dir, install_packages)
 
     print(f"[{timestamp()}]: Copying other build files.")
     build_files = Path("build_files/")
     copyfile(build_files / Path("Dockerfile"), build_dir / Path("Dockerfile"))
     copyfile(build_files / Path("config"), build_dir / Path("config"))
+    _ = copytree(build_files / Path("stageSG/"), sg_stage, dirs_exist_ok=True)
+
+    print(f"[{timestamp()}]: Changing default mirrors.")
+    _ = copy_tree(str(build_files / Path("stage0/")), str(build_dir / Path("stage0")))
+
 
     print(f"[{timestamp()}]: Generating Raspbian image. This may take a while.")
 
