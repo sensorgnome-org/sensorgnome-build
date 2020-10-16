@@ -8,14 +8,18 @@ from package_helpers import timestamp, bcolors, install_files, create_package, m
 
 PROJECT = "sensorgnome-support"
 REPO = "https://github.com/sensorgnome-org/sensorgnome-support.git"
+BRANCH = "systemd"
 
 
 def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip", host=''):
     base_dir = getcwd()
+    build_dir = path.join(base_dir, temp_dir, PROJECT)
     print(f"[{timestamp()}]: Starting build of {PROJECT}.")
 
     print(f"[{timestamp()}]: Git clone from {REPO}.")
     git.Git(path.join(base_dir, temp_dir)).clone(REPO)
+    print(f"[{timestamp()}]: Git checkout branch {BRANCH}.")
+    git.Git(build_dir).checkout(BRANCH)
 
     build_dir = path.join(base_dir, temp_dir, PROJECT)
     output_package_name = f"{PROJECT}_{version}.deb"
@@ -33,7 +37,7 @@ def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip",
         "Essential": "yes",
         "Depends": "perl, awk, python, bash, libjson-perl, vsftpd, udhcpc, autossh",
         "Maintainer": "Dale Floer <dalefloer@gmail.com>",
-        "Description": "Sensorgnome master control process.",
+        "Description": "Sensorgnome support scripts and services.",
         }
     output = '\n'.join([f"{k}: {v}" for k, v in template.items()])
     output += '\n'  # Final newline needed at end of file.
@@ -42,9 +46,10 @@ def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip",
             f.write(x)
     # Copy files to where they should go.
     files = {
-        "scripts/": [build_dir, path.join(temp_package_dir, "home", "pi", "proj", "sensorgnome"), 0o755],
+        "scripts/": [build_dir, path.join(temp_package_dir, "home", "pi", "proj", "sensorgnome", "scripts"), 0o755],
         "udev-rules/usb-hub-devices.rules": [build_dir, path.join(temp_package_dir, "etc", "udev", "rules.d"), None],
         "root/etc/": [build_dir, path.join(temp_package_dir, "etc"), None],
+        "systemd-services/": [build_dir, path.join(temp_package_dir, "lib", "systemd", "system"), None],
         # "root/dev/sdcard/uboot/network.txt": [build_dir, path.join(temp_package_dir, "boot"), None],
         # todo: Handle overlays.
         # todo: Handle GESTURES.TXT too.
