@@ -1,4 +1,5 @@
 nodejs
+npm
 libc-ares2
 libnode64
 libuv1
@@ -6,3 +7,6 @@ libjson-perl
 vsftpd
 udhcpc
 autossh
+gpsd
+gpsd-clients
+chrony

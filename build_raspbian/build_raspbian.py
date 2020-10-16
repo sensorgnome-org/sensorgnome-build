@@ -12,7 +12,7 @@ from helpers import timestamp, bcolors
 
 def pi_gen_setup(pi_gen_tempdir, package_dir):
     repo = "https://github.com/RPi-Distro/pi-gen.git"
-    commit = "8ef3f47d7f0c6fdc722b1c3161d2502c9201bcc1"
+    commit = "dd96ca1c8629da6589b381546e2b7677c7611744"
     base_dir = getcwd()
 
     build_dir = pi_gen_tempdir / Path("pi-gen")
