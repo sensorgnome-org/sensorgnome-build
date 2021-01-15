@@ -10,9 +10,9 @@ sys.path.append("../")
 from helpers import timestamp, bcolors
 
 
-def pi_gen_setup(pi_gen_tempdir, package_dir):
+def pi_gen_setup(pi_gen_tempdir="pi-gen-temp", package_dir="../build_packages/output/", output_image_dir="../", image_filename="sensorgnome.img"):
     repo = "https://github.com/RPi-Distro/pi-gen.git"
-    commit = "dd96ca1c8629da6589b381546e2b7677c7611744"
+    commit = "225f69828fa05361d6028edf2d7a69db73fe2b45"
     base_dir = getcwd()
 
     build_dir = pi_gen_tempdir / Path("pi-gen")
@@ -34,6 +34,8 @@ def pi_gen_setup(pi_gen_tempdir, package_dir):
     print(f"[{timestamp()}]: Changing default mirrors.")
     _ = copy_tree(str(build_files / Path("stage0/")), str(build_dir / Path("stage0")))
 
+    print(f"[{timestamp()}]: Overwriting partition creation.")
+    _ = copy_tree(str(build_files / Path("export-image/")), str(build_dir / Path("export-image")))
 
     print(f"[{timestamp()}]: Generating Raspbian image. This may take a while.")
 
@@ -45,6 +47,13 @@ def pi_gen_setup(pi_gen_tempdir, package_dir):
         print(f"[{timestamp()}]: {bcolors.RED}Pi-gen build failed.{bcolors.ENDC}")
         return False
     chdir(base_dir)
+    deploy_path = build_dir / "deploy"
+    deploy_image_name = list(deploy_path.glob('*.img'))[0]
+    output_path = output_image_dir / image_filename
+    copyfile(deploy_path / deploy_image_name, output_path)
+    print(f"[{timestamp()}]: {bcolors.GREEN}Pi-gen build finished successfully.{bcolors.ENDC}")
+    print(f"[{timestamp()}]: Output image is at {output_path}")
+    return output_path
 
 
 if __name__ == "__main__":
@@ -53,5 +62,5 @@ if __name__ == "__main__":
     # Start from a clean slate, remove any existing build dirs.
     rmtree(temp_dir, ignore_errors=True)
     makedirs(temp_dir)
-
-    pi_gen_setup(temp_dir, Path("../build_packages/output/"))
+    image_name = "sg-test.img"
+    pi_gen_setup(temp_dir, Path("../build_packages/output/"), Path("../"), image_name)

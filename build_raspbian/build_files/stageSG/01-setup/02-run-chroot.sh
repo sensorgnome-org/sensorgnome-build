@@ -1,6 +1,9 @@
 #!/bin/sh -e
 
-# Install nodejs sensorgnome server dependencies using NPM.
+# Set up data and config directories.
 on_chroot << EOF
-npm install pm2 express socket.io connect errorhandler body-parser method-override multer
+    mkdir -p /data
+    mkdir -p /data/config
+    mkdir -p /data/SGdata
+    touch /data/config/deployment.txt
 EOF
