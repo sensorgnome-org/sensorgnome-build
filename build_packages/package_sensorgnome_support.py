@@ -35,7 +35,7 @@ def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip",
         "Version": version,
         "Architecture": "armhf",
         "Essential": "yes",
-        "Depends": "perl, awk, python, bash, libjson-perl, vsftpd, udhcpc, autossh",
+        "Depends": "perl, awk, python, bash, libjson-perl, vsftpd, udhcpc, autossh, hostapd",
         "Maintainer": "Dale Floer <dalefloer@gmail.com>",
         "Description": "Sensorgnome support scripts and services.",
         }
