@@ -10,23 +10,27 @@ sys.path.append("../")
 from helpers import timestamp, bcolors
 
 
-def pi_gen_setup(pi_gen_tempdir="pi-gen-temp", package_dir="../build_packages/output/", output_image_dir="../", image_filename="sensorgnome.img"):
+def pi_gen_build(package_dir=Path("build_packages/output/"), output_image_dir=Path(""), image_filename="sensorgnome.img"):
     repo = "https://github.com/RPi-Distro/pi-gen.git"
     commit = "225f69828fa05361d6028edf2d7a69db73fe2b45"
     base_dir = getcwd()
 
-    build_dir = pi_gen_tempdir / Path("pi-gen")
+    temp_dir = base_dir / Path("pi-gen-temp")
+    rmtree(temp_dir, ignore_errors=True)
+    makedirs(temp_dir)
+
+    build_dir = temp_dir / Path("pi-gen")
     print(f"[{timestamp()}]: Git clone from {repo}, commit: {commit[:8]}.")
-    git.Git(pi_gen_tempdir).clone(repo)
+    git.Git(temp_dir).clone(repo)
     git.Git(build_dir).checkout(commit)
 
     print(f"[{timestamp()}]: Copying debian pacakges from `build_packages'.")
     sg_stage = build_dir / Path("stageSG")
     install_packages = sg_stage / Path("00-packages/")
-    _ = copytree(package_dir, install_packages)
+    _ = copytree(base_dir / package_dir, install_packages)
 
     print(f"[{timestamp()}]: Copying other build files.")
-    build_files = Path("build_files/")
+    build_files = base_dir / Path("build_raspbian/build_files/")
     copyfile(build_files / Path("Dockerfile"), build_dir / Path("Dockerfile"))
     copyfile(build_files / Path("config"), build_dir / Path("config"))
     _ = copytree(build_files / Path("stageSG/"), sg_stage, dirs_exist_ok=True)
@@ -49,10 +53,9 @@ def pi_gen_setup(pi_gen_tempdir="pi-gen-temp", package_dir="../build_packages/ou
     chdir(base_dir)
     deploy_path = build_dir / "deploy"
     deploy_image_name = list(deploy_path.glob('*.img'))[0]
-    output_path = output_image_dir / image_filename
+    output_path = base_dir / output_image_dir / image_filename
     copyfile(deploy_path / deploy_image_name, output_path)
     print(f"[{timestamp()}]: {bcolors.GREEN}Pi-gen build finished successfully.{bcolors.ENDC}")
-    print(f"[{timestamp()}]: Output image is at {output_path}")
     return output_path
 
 
@@ -63,4 +66,4 @@ if __name__ == "__main__":
     rmtree(temp_dir, ignore_errors=True)
     makedirs(temp_dir)
     image_name = "sg-test.img"
-    pi_gen_setup(temp_dir, Path("../build_packages/output/"), Path("../"), image_name)
+    pi_gen_build(temp_dir, Path("../"), image_name)

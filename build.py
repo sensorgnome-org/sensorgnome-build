@@ -1,7 +1,8 @@
-from helpers import timestamp, bcolors
+from helpers import timestamp, bcolors, image_name
 from pathlib import Path
 import os
 import subprocess
+from build_raspbian.build_raspbian import pi_gen_build
 
 """
 The purpose of this script is the overall runner to builid that packages to be installed on a sensorgnome,
@@ -55,12 +56,24 @@ def docker_build_packages(dockcross_exec):
     return True
 
 
+def create_image(final_image_name):
+    print(f"[{timestamp()}]: Starting build of Raspbian image.")
+    result = pi_gen_build(image_filename=final_image_name)
+    return result
+
+
 if __name__ == "__main__":
 # Start by building packages.
 # The first step is to setup the dockcross container being used.
 # This assumes that the image exists. See build_packages/Docker.md
     dockerfile_location = Path("build_packages/")
     dockcross_image = "sensorgnome-armv7-hf"
+    final_image_name = image_name()
     dockcross_exec = docker_package_setup(dockerfile_location, dockcross_image)
     res = docker_build_packages(dockcross_exec)
-    print(res)
+    img = create_image(final_image_name)
+    if img:
+        print(f"[{timestamp()}]: {bcolors.GREEN}Sensorgnome image {final_image_name} built successfully!{bcolors.ENDC}")
+        print(f"[{timestamp()}]: Output image is at {img}")
+    else:
+        print(f"[{timestamp()}]: {bcolors.RED}Sensorgnome build failed.{bcolors.ENDC}")
