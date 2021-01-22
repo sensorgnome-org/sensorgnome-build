@@ -1,5 +1,5 @@
-from os import chdir, makedirs, path, chmod, walk
-from shutil import copyfile, copytree
+from os import chdir, makedirs, path, chmod, walk, listdir
+from shutil import copyfile, copytree, copy2
 import subprocess
 
 import sys
@@ -28,7 +28,6 @@ def install_files(files):
         if split_name != '':
             dest_name = split_name
         source = path.join(file_paths[0], file_name)
-        destination = path.join(file_paths[1], dest_name)
         permissions = file_paths[2]
         try:
             makedirs(file_paths[1])
@@ -36,11 +35,32 @@ def install_files(files):
             pass  # Directory was already created in a previous batch.
         # Handle copy of single file differently than copy of a directory + contents.
         try:
+            destination = path.join(file_paths[1], dest_name)
             copyfile(source, destination)
         except IsADirectoryError:
-            copytree(source, destination)
+            destination = file_paths[1]
+            copytree2(source, destination)
         if permissions is not None:  # Permissions are not supported for multiple files right now.
             recursive_chmod(destination, permissions)
+
+
+def copytree2(source, destination, symlinks=False, ignore=None):
+    """
+    Copytree that behaves like it has Python 3.8's dirs_exist_ok set.
+    Args:
+        source (Path): Source path.
+        destination (Path): Destination path.
+        symlink (bool, optional): As in stock copytree. Defaults to False.
+        ignore (calleable, optional): As in stock copytree. Defaults to None.
+    """
+    for item in listdir(source):
+        src = path.join(source, item)
+        dst = path.join(destination, item)
+        if path.isdir(src):
+            copytree(src, dst, symlinks, ignore)
+        else:
+            copy2(src, dst)
+
 
 def recursive_chmod(base_path, permissions):
     """

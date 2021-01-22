@@ -1,4 +1,5 @@
 from datetime import datetime
+import git
 """
 The purpose of this file is to contain helper functions in use with various.
 """
@@ -35,3 +36,22 @@ class bcolors:
     ENDC = "\033[0m"
     BOLD = "\033[1m"
     UNDERLINE = "\033[4m"
+
+def image_name(git_hash=True):
+    """
+    Returns a name for the image.
+    Default is of the form "Sensorgnome_YYYY-mm-dd_git-hash.img". Note that the hash is truncated to the first 8 characters.
+    Args:
+        git_hash (bool, optional): Include the commit hash. Defaults to True.
+    Returns:
+        (str) The name for the image.
+    """
+    repo = git.Repo('.')
+    current_hash = str(repo.head.commit)[:8]
+    date = datetime.strftime(datetime.utcnow(), '%Y-%m-%d')
+    name = ''
+    if git_hash:
+        name = f"Sensorgnome_{date}_{current_hash}.img"
+    else:
+        name = f"Sensorgnome_{date}.img"
+    return name

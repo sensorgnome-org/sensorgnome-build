@@ -23,15 +23,19 @@ def parse_command_line():
     args = parser.parse_args()
     return args
 
-if __name__ == "__main__":
-    options = parse_command_line()
-    temp_dir = options.temp_dir
-    build_dir = options.output_dir
-    c_compiler = options.c_compiler
-    cpp_compiler = options.cpp_compiler
-    strip_bin = options.strip_bin
-    xcc_host = options.xcc_host
-    # Create the temporary build dir if it doesn't exist. Remove it (and its contents).
+
+def build(temp_dir, build_dir, c_compiler=None, cpp_compiler=None, strip_bin=None, xcc_host=None):
+    """
+    Runner function that handles building all of the Sensorgnome packages.
+    Args:
+        temp_dir (Path): Path to the temporary directory, that will be used tfor building and temporary build artifacts.
+        build_dir (Path): Path to the output directory for finished .deb packages.
+        c_compiler (Path, optional): Path to the gcc executable. Default: None.
+        cpp_compiler (Path, optional): Path to the g++ executable. Default: None.
+        strip_bin (Path, optional): Path to the strip executable. Default: None.
+        xcc_host (str, optional): GCC compiler triplet, needed if cross-compiling. Default: None.
+"""
+# Create the temporary build dir if it doesn't exist. Remove it (and its contents).
     # That is, always a clean build.
     try:
         mkdir(temp_dir)
@@ -74,5 +78,19 @@ if __name__ == "__main__":
 
     if all(build_success.values()):
         print(f"[{timestamp()}]: {bcolors.GREEN}Sensorgnome software packages successfully built.{bcolors.ENDC}")
+        return True
     else:
         print(f"[{timestamp()}]: {bcolors.RED}Sensorgnome software packages failed build.{bcolors.ENDC}")
+        return False
+
+
+if __name__ == "__main__":
+    options = parse_command_line()
+    temp_dir = options.temp_dir
+    build_dir = options.output_dir
+    c_compiler = options.c_compiler
+    cpp_compiler = options.cpp_compiler
+    strip_bin = options.strip_bin
+    xcc_host = options.xcc_host
+
+    _ = build(temp_dir, build_dir, c_compiler=c_compiler, cpp_compiler=cpp_compiler, strip_bin=strip_bin, xcc_host=xcc_host)
