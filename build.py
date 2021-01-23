@@ -46,7 +46,7 @@ def docker_build_packages(dockcross_exec):
     Returns:
         bool: True if the command completed successfully, False if it didn't.
     """
-    cmd = [f"./{dockcross_exec} bash -c 'cd build_packages && python3.6 build_packages.py -t build-temp -o output -c $CC -p $CXX -s $STRIP -x armv7-unknown-linux-gnueabihf'"]
+    cmd = [f"./{dockcross_exec} bash -c 'cd build_packages && sudo python3.6 build_packages.py -t build-temp -o output -c $CC -p $CXX -s $STRIP -x armv7-unknown-linux-gnueabihf'"]
     print(f"command: {cmd}")
     build = subprocess.Popen(cmd, shell=True)
     exit_code = build.wait()

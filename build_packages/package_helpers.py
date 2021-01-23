@@ -1,4 +1,5 @@
-from os import chdir, makedirs, path, chmod, walk, listdir
+from os import chdir, makedirs, path, chmod, chown, walk, listdir
+from os import environ,getcwd
 from shutil import copyfile, copytree, copy2
 import subprocess
 
@@ -14,7 +15,7 @@ The purpose of this file is to contain helper functions used elsewhere.
 def install_files(files):
     """
     Install files given in the files dict to their locations relative to base_dir.
-    Todo: support setting owner as ["user", "group"].
+    Todo: support setting owner as ["user", "group"]. This is hardcoded to 0 and 0.
     Args:
         files (dict): Dictionary of the form {"filename": ["source_path", "destination_path", "permissions"]}
             Note that "filename" can be a file or a directory.
@@ -40,8 +41,10 @@ def install_files(files):
         except IsADirectoryError:
             destination = file_paths[1]
             copytree2(source, destination)
-        if permissions is not None:  # Permissions are not supported for multiple files right now.
+        if permissions is not None:
             recursive_chmod(destination, permissions)
+        # Hardcoded 0:0 (root:root) for now.
+        recursive_chown(destination, 0, 0)
 
 
 def copytree2(source, destination, symlinks=False, ignore=None):
@@ -65,14 +68,38 @@ def copytree2(source, destination, symlinks=False, ignore=None):
 def recursive_chmod(base_path, permissions):
     """
     Recursively chmod files and directories from the given base path, including the root.
+    If the base path is a file, then operate on just that file.
     Args:
         base_path (path): Path to start chmod from.
         permissions (int): Octal permissions to set.
     """
-    for dir_path, _, file_names in walk(base_path):
-        chmod(dir_path, permissions)
-        for file in file_names:
-            chmod(path.join(dir_path, file), permissions)
+    if path.isfile(base_path):
+        chmod(base_path, permissions)
+    else:
+        for dir_path, _, file_names in walk(base_path):
+            chmod(dir_path, permissions)
+            for file in file_names:
+                chmod(path.join(dir_path, file), permissions)
+
+
+def recursive_chown(base_path, user_id=0, group_id=0):
+    """
+    Recursively chown files and directories from the given base path, including the root.
+    If the base path is a file, then operate on just that file.
+    Args:
+        base_path (path): Path to start chmod from.
+        user_id (int, optional): User ID (uid) to set. Defaults to 0.
+        group_id (int, optional): Group ID (gid) to set. Defaults to 0.
+    """
+    #getUser = lambda: environ["USERNAME"] if "C:" in getcwd() else environ["USER"]
+    if path.isfile(base_path):
+        chown(base_path, uid=user_id, gid=group_id)
+    else:
+        for dir_path, _, file_names in walk(base_path):
+            chown(dir_path, uid=user_id, gid=group_id)
+            for file in file_names:
+                chown(path.join(dir_path, file), uid=user_id, gid=group_id)
+
 
 def create_package(output_package_name, base_dir, temp_dir, temp_package_dir, build_output_dir):
     """
