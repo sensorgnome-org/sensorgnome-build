@@ -77,6 +77,8 @@ def build(temp_dir, build_dir, c_compiler=None, cpp_compiler=None, strip_bin=Non
     build_success["find_tags"] = find_tags.build(temp_dir, build_dir, find_tags_version, cpp_compiler, strip_bin, xcc_host)
 
     if all(build_success.values()):
+        print(f"[{timestamp()}]: Cleaning up temporary build files.")
+        rmtree(temp_dir)
         print(f"[{timestamp()}]: {bcolors.GREEN}Sensorgnome software packages successfully built.{bcolors.ENDC}")
         return True
     else:
