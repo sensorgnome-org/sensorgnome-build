@@ -1,4 +1,5 @@
 from os import chdir, makedirs, path, chmod, chown, walk, listdir
+from pathlib import Path
 from os import environ,getcwd
 from shutil import copyfile, copytree, copy2
 import subprocess
@@ -160,3 +161,11 @@ def make_subprocess(make_command, show_debug="no", errors="console"):
     if exit_code != 0:
         res = False
     return res, {"debug": debug, "error": error}
+
+
+def create_repo_files(package_dir=Path("output/")):
+    """
+    Creates the Packages.gz file needed to use the output packages as a repo for installing packages from.
+    """
+    output_path = package_dir / Path("Packages.gz")
+    subprocess.run([f"dpkg-scanpackages {package_dir} /dev/null | gzip > {output_path}"], shell=True)
