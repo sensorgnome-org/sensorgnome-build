@@ -2,7 +2,7 @@
 
 # Install the previously copied packages in the chroot.
 on_chroot << EOF
-ls /tmp
+echo "Installing Sensorgnome Packages."
 apt install -y /tmp/sg/fcd_0.5-1.deb
 apt install -y /tmp/sg/find_tags_0.5-1.deb
 apt install -y /tmp/sg/sensorgnome-support_0.5-1.deb

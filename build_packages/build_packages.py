@@ -1,8 +1,11 @@
 from os import mkdir, rmdir
 from shutil import rmtree
 import argparse
+import subprocess
+from pathlib import Path
+from datetime import datetime
 
-from package_helpers import bcolors, timestamp
+from package_helpers import bcolors, timestamp, utc_dt, generate_deb_checksum
 import package_vamp_alsa_host as vamp_alsa_host
 import package_vamp_plugins as vamp_plugins
 import package_sensorgnome_control as sg_control
@@ -24,7 +27,7 @@ def parse_command_line():
     return args
 
 
-def build(temp_dir, build_dir, c_compiler=None, cpp_compiler=None, strip_bin=None, xcc_host=None):
+def build(temp_dir, build_dir, c_compiler=None, cpp_compiler=None, strip_bin=None, xcc_host=None, for_repo=True):
     """
     Runner function that handles building all of the Sensorgnome packages.
     Args:
@@ -34,6 +37,7 @@ def build(temp_dir, build_dir, c_compiler=None, cpp_compiler=None, strip_bin=Non
         cpp_compiler (Path, optional): Path to the g++ executable. Default: None.
         strip_bin (Path, optional): Path to the strip executable. Default: None.
         xcc_host (str, optional): GCC compiler triplet, needed if cross-compiling. Default: None.
+        for_repo (bool, optional): Whether or not to create the supporting files needed to make these packages part of a repo. Default: True.
 """
 # Create the temporary build dir if it doesn't exist. Remove it (and its contents).
     # That is, always a clean build.
@@ -76,6 +80,10 @@ def build(temp_dir, build_dir, c_compiler=None, cpp_compiler=None, strip_bin=Non
     find_tags_version = "0.5-1"
     build_success["find_tags"] = find_tags.build(temp_dir, build_dir, find_tags_version, cpp_compiler, strip_bin, xcc_host)
 
+    if for_repo:
+        print(f"[{timestamp()}]: Creating repo files.")
+        create_repo_files(build_dir)
+
     if all(build_success.values()):
         print(f"[{timestamp()}]: Cleaning up temporary build files.")
         rmtree(temp_dir)
@@ -84,6 +92,35 @@ def build(temp_dir, build_dir, c_compiler=None, cpp_compiler=None, strip_bin=Non
     else:
         print(f"[{timestamp()}]: {bcolors.RED}Sensorgnome software packages failed build.{bcolors.ENDC}")
         return False
+
+
+def create_repo_files(package_dir=Path("output/")):
+    """
+    Creates the Packages.gz and Release file needed to use the output packages as a repo for installing packages from.
+    """
+    output_path = package_dir / Path("Packages.gz")
+    subprocess.run([f"dpkg-scanpackages --hash sha256 {package_dir} /dev/null | gzip > {output_path}"], shell=True)
+
+    # Release "needs" a checksum of the Packages file.
+    res = generate_deb_checksum(output_path)
+    packages_checksum = f"{res} Packages.gz"
+    print(packages_checksum)
+
+    # Debian requires RFC5322 date format.
+    release_meta = {
+        "Label": "Sensorgnome",
+        "Architecture": "armhf",
+        "Archive": "Sensorgnome",
+        "Component": "main",
+        "Date": f"{datetime.strftime(utc_dt(), '%a, %d %b %Y %T %z')}",
+        "Description": "Optional and required packages to build a working Sensorgnome.",
+        "SHA256": f"\n {packages_checksum}"
+    }
+    with open(package_dir / Path("Release"), 'w') as f:
+        output = '\n'.join([f"{k}: {v}" for k, v in release_meta.items()])
+        output += '\n'  # Final newline needed at end of file.
+        for x in output:
+            f.write(x)
 
 
 if __name__ == "__main__":
@@ -95,4 +132,4 @@ if __name__ == "__main__":
     strip_bin = options.strip_bin
     xcc_host = options.xcc_host
 
-    _ = build(temp_dir, build_dir, c_compiler=c_compiler, cpp_compiler=cpp_compiler, strip_bin=strip_bin, xcc_host=xcc_host)
+    _ = build(temp_dir, build_dir, c_compiler=c_compiler, cpp_compiler=cpp_compiler, strip_bin=strip_bin, xcc_host=xcc_host, for_repo=True)
