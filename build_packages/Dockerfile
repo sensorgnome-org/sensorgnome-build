@@ -39,7 +39,7 @@ RUN bash -c "wget https://github.com/chriskuehl/python3.6-debian-stretch/release
 RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
 && python3.6 get-pip.py \
 && rm get-pip.py \
-&& python3.6 -m pip install gitpython
+&& python3.6 -m pip install gitpython pytz filehash
 # After we install the various C/C++ dependencies, we need to symlink them into the crosscompiler.
 ADD docker_symlinks.py /work/docker_symlinks.py
 RUN python3.6 docker_symlinks.py

@@ -1,8 +1,10 @@
-from os import chdir, makedirs, path, chmod, chown, walk, listdir
+from os import chdir, makedirs, path, chmod, chown, walk, listdir, environ, getcwd
 from pathlib import Path
-from os import environ,getcwd
 from shutil import copyfile, copytree, copy2
 import subprocess
+from datetime import datetime
+import pytz
+from filehash import FileHash
 
 import sys
 sys.path.append("../")
@@ -163,9 +165,23 @@ def make_subprocess(make_command, show_debug="no", errors="console"):
     return res, {"debug": debug, "error": error}
 
 
-def create_repo_files(package_dir=Path("output/")):
+def utc_dt():
     """
-    Creates the Packages.gz file needed to use the output packages as a repo for installing packages from.
+    Returns the current date/time of the system in UTC format that is timezone aware.
     """
-    output_path = package_dir / Path("Packages.gz")
-    subprocess.run([f"dpkg-scanpackages {package_dir} /dev/null | gzip > {output_path}"], shell=True)
+    return datetime.now(pytz.utc)
+
+
+def generate_deb_checksum(file_path):
+    """
+    Generates checksum information per: https://wiki.debian.org/DebianRepository/Format#MD5Sum.2C_SHA1.2C_SHA256
+    Only supports SHA256, as the other two are considered insecure.
+    Args:
+        file_path (Path): Path to the file to open and checksum.
+    Returns:
+        String of the form: "checksum size".
+    """
+    hasher = FileHash('sha256')
+    file_hash = hasher.hash_file(file_path)
+    file_size = path.getsize(file_path)
+    return f"{file_hash} {file_size}"
