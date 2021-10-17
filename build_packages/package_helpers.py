@@ -58,11 +58,13 @@ def copytree2(source, destination, symlinks=False, ignore=None):
         symlink (bool, optional): As in stock copytree. Defaults to False.
         ignore (calleable, optional): As in stock copytree. Defaults to None.
     """
+    #print(f"copytree2: {source} -> {destination}")
+    makedirs(destination, exist_ok=True)  # Note: ignoring ownership and permission...
     for item in listdir(source):
         src = path.join(source, item)
         dst = path.join(destination, item)
         if path.isdir(src):
-            copytree(src, dst, symlinks, ignore)
+            copytree2(src, dst, symlinks, ignore)
         else:
             copy2(src, dst)
 
