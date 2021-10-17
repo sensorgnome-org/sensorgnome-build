@@ -8,7 +8,7 @@ on_chroot << EOF
     mkdir -p /data/SGdata
     touch /data/config/deployment.txt
 
-    echo "Creating deprecated /boot mount points."
-    mkdir -p /boot/uboot
-    mkdir -p /boot/SGdata
+    echo "Creating symlinks for deprecated /boot mount points."
+    ln -s /data/config /boot/uboot
+    ln -s /data/SGdata /boot/SGdata
 EOF
