@@ -31,7 +31,7 @@ def build(temp_dir, build_dir, c_compiler=None, cpp_compiler=None, strip_bin=Non
     """
     Runner function that handles building all of the Sensorgnome packages.
     Args:
-        temp_dir (Path): Path to the temporary directory, that will be used tfor building and temporary build artifacts.
+        temp_dir (Path): Path to the temporary directory, that will be used for building and temporary build artifacts.
         build_dir (Path): Path to the output directory for finished .deb packages.
         c_compiler (Path, optional): Path to the gcc executable. Default: None.
         cpp_compiler (Path, optional): Path to the g++ executable. Default: None.
@@ -71,8 +71,9 @@ def build(temp_dir, build_dir, c_compiler=None, cpp_compiler=None, strip_bin=Non
     build_success["sensorgnome-control"] = sg_control.build(temp_dir, build_dir, sg_control_version, cpp_compiler, strip_bin, xcc_host)
     sg_support_version = "0.5-1"
     build_success["sensorgnome-support"] = sg_support.build(temp_dir, build_dir, sg_support_version, cpp_compiler, strip_bin, xcc_host)
-    openssh_version = "0.5-1"
-    build_success["sensorgnome-openssh"] = openssh.build(temp_dir, build_dir, openssh_version, cpp_compiler, strip_bin, xcc_host)
+    #openssh_version = "0.5-1"
+    #build_success["sensorgnome-openssh"] = openssh.build(temp_dir, build_dir, openssh_version, cpp_compiler, strip_bin, xcc_host)
+    
     sg_librtlsdr_version = "0.5-1"
     build_success["sensorgnome-librtlsdr"] = sg_librtlsdr.build(temp_dir, build_dir, sg_librtlsdr_version, cpp_compiler, strip_bin, xcc_host)
     fcd_version = "0.5-1"

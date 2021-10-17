@@ -28,7 +28,7 @@ def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip",
         print(f"[{timestamp()}]: Build failed with error: {bcolors.RED}\n{info['error']}{bcolors.ENDC}")
         return False
     # Strip binary files.
-    _ = subprocess.Popen([f"{strip_bin}", "vamp-alsa-host"])
+    subprocess.run([strip_bin, "vamp-alsa-host"], check=True)
     chdir(base_dir)
     
     output_package_name = f"{PROJECT}_{version}.deb"
@@ -51,8 +51,10 @@ def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip",
     output = '\n'.join([f"{k}: {v}" for k, v in template.items()])
     output += '\n'  # Final newline needed at end of file.
     with open(deb_metadata_dir + "/control", 'w') as f:
-        for x in output:
-            f.write(x)
+        f.write(output)
+    #    for x in output:
+    #        f.write(x)
+
     # Copy files to where they should go.
     files = {
         "vamp-alsa-host": [build_dir, path.join(temp_package_dir, "usr", "bin"), 0o755],
