@@ -29,6 +29,7 @@ def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip",
     # Workaround for cross-compilation not being able to find libusb unless explicity directed to it.
     configure_flags = ''
     if host == "armv7-unknown-linux-gnueabi":
+        configure_flags = "LIBUSB_CFLAGS=-I/usr/xcc/armv7-unknown-linux-gnueabi/armv7-unknown-linux-gnueabi/sysroot/usr/include/libusb-1.0 LIBUSB_LIBS=-L/usr/xcc/armv7-unknown-linux-gnueabi/armv7-unknown-linux-gnueabi/sysroot/usr/lib/ LDFLAGS=-lusb-1.0"
 
     if host:
         host = f"--host {host}"
