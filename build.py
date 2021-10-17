@@ -1,4 +1,4 @@
-from helpers import timestamp, bcolors, image_name
+from build_packages.helpers import timestamp, bcolors, image_name
 from pathlib import Path
 import os
 import subprocess

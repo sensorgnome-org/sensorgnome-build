@@ -7,7 +7,6 @@ import pytz
 from filehash import FileHash
 
 import sys
-sys.path.append("../")
 from helpers import *
 
 """
