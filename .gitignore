@@ -7,6 +7,10 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+build-temp/
+output/
+pi-gen/
+pi-gen-temp/
 .Python
 build/
 develop-eggs/
