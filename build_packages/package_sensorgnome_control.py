@@ -2,20 +2,27 @@ import git
 import time
 import subprocess
 import sys
-from os import mkdir, chdir, getcwd, path
+from os import mkdir, chdir, getcwd, path, rename
 from shutil import copyfile
-from package_helpers import timestamp, bcolors, install_files, create_package, make_subprocess
+from package_helpers import timestamp, bcolors, install_files, create_package, make_subprocess, copytree2
 
 PROJECT = "sensorgnome-control"
 REPO = "https://github.com/sensorgnome-org/sensorgnome-control.git"
+# To use a local copy of the repo instead of the remote git repo set SRCDIR
+SRCDIR = None # None, abs path, or path relative to build_packages dir
+SRCDIR = "/mnt/sensorgnome-control"
 
 
 def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip", host=''):
     base_dir = getcwd()
     print(f"[{timestamp()}]: Starting build of {PROJECT}.")
 
-    print(f"[{timestamp()}]: Git clone from {REPO}.")
-    git.Git(path.join(base_dir, temp_dir)).clone(REPO)
+    if SRCDIR:
+        print(f"[{timestamp()}]: Copying {PROJECT} from {SRCDIR}")
+        copytree2(SRCDIR, path.join(base_dir, temp_dir, PROJECT))
+    else:
+        print(f"[{timestamp()}]: Git clone from {REPO}.")
+        git.Git(path.join(base_dir, temp_dir)).clone(REPO)
 
     build_dir = path.join(base_dir, temp_dir, PROJECT)    
     output_package_name = f"{PROJECT}_{version}.deb"
@@ -42,7 +49,7 @@ def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip",
             f.write(x)
     # Copy files to where they should go.
     files = {
-        "master/": [build_dir, path.join(temp_package_dir, "home", "pi", "proj", "sensorgnome"), None],
+        "master/": [build_dir, path.join(temp_package_dir, "home", "pi", "proj", "sensorgnome", "master"), None],
         }
     install_files(files)
     # Finally, package our files.
