@@ -48,6 +48,7 @@ def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip",
         for x in output:
             f.write(x)
     # Copy files to where they should go.
+    rename(path.join(build_dir, "master/postinst"), path.join(deb_metadata_dir, "postinst"))
     files = {
         "master/": [build_dir, path.join(temp_package_dir, "home", "pi", "proj", "sensorgnome", "master"), None],
         }
