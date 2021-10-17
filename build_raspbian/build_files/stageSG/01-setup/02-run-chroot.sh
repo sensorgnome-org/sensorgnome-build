@@ -6,7 +6,7 @@ on_chroot << EOF
     mkdir -p /data
     mkdir -p /data/config
     mkdir -p /data/SGdata
-    touch /data/config/deployment.txt
+    cp /home/pi/proj/sensorgnome/master/defaultDeployment.txt /data/config/deployment.txt
 
     echo "Creating symlinks for deprecated /boot mount points."
     ln -s /data/config /boot/uboot
