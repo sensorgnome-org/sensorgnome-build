@@ -1,6 +1,7 @@
 IMG_NAME=SensorGnome
 ENABLE_SSH=1
 TIMEZONE_DEFAULT="America/Vancouver"
+LOCALE_DEFAULT="en_US.UTF-8"
 DEPLOY_ZIP=0
 TARGET_HOSTNAME="sensorgnome-test"
 FIRST_USER_PASS="sensorgnome"

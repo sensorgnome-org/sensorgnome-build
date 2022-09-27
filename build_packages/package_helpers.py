@@ -7,7 +7,6 @@ import pytz
 from filehash import FileHash
 
 import sys
-sys.path.append("../")
 from helpers import *
 
 """
@@ -59,11 +58,13 @@ def copytree2(source, destination, symlinks=False, ignore=None):
         symlink (bool, optional): As in stock copytree. Defaults to False.
         ignore (calleable, optional): As in stock copytree. Defaults to None.
     """
+    #print(f"copytree2: {source} -> {destination}")
+    makedirs(destination, exist_ok=True)  # Note: ignoring ownership and permission...
     for item in listdir(source):
         src = path.join(source, item)
         dst = path.join(destination, item)
         if path.isdir(src):
-            copytree(src, dst, symlinks, ignore)
+            copytree2(src, dst, symlinks, ignore)
         else:
             copy2(src, dst)
 
@@ -116,16 +117,13 @@ def create_package(output_package_name, base_dir, temp_dir, temp_package_dir, bu
     Returns:
         bool: False if no errors occurred, otherwise an error message. In this case, the error message is straight from dpkg-deb if one occurs.
     """
-    dpkg_cmd = f"dpkg-deb --build {temp_package_dir}"
-    dpkg_process = subprocess.Popen(dpkg_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    # Wait for dpkg-deb to finish.
-    while True:
-        line = dpkg_process.stdout.readline()
-        err =  dpkg_process.stderr.readline()
-        if err:
-            return err.decode('ascii') # Should probably raise an exception here.
-        elif line == b'' and err == b'':
-            break
+    dpkg_cmd = f"dpkg-deb --build --root-owner-group {temp_package_dir}"
+    print(dpkg_cmd)
+    try:
+        res = subprocess.run(dpkg_cmd, shell=True, check=True)
+    except subprocess.CalledProcessError as e:
+        print("Creating package failed: {e}")
+        return str(e)
     # Finally, copy the finished package to the output dir.
     src = path.join(temp_dir, output_package_name)
     dest = path.join(base_dir, build_output_dir, output_package_name)
@@ -153,11 +151,11 @@ def make_subprocess(make_command, show_debug="no", errors="console"):
     make_process = subprocess.Popen(f"{make_command}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = make_process.communicate()
     exit_code = make_process.wait()
-    debug += out.decode("ascii")
-    error += err.decode("ascii")
+    debug += out.decode()
+    error += err.decode()
     if show_debug == "console":
         print(debug)
-    if errors == "conole":
+    if errors == "console":
         print(error)
     res = True
     if exit_code != 0:

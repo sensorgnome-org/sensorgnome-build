@@ -12,10 +12,10 @@ if __name__ == "__main__":
     libs_symlinks = ["libfftw3", "libvamp", "libasound", "libboost_", "libusb", "libudev", "libsqlite3", "libz", "libcrypto", "libssl"]
 
     #include_symlink_dest = "/usr/xcc/armv7-unknown-linux-gnueabihf/lib/gcc/armv7-unknown-linux-gnueabihf/8.3.0/include/"
-    include_symlink_dest = "/usr/xcc/armv7-unknown-linux-gnueabihf/armv7-unknown-linux-gnueabihf/sysroot/usr/include/"
+    include_symlink_dest = "/usr/xcc/armv7-unknown-linux-gnueabi/armv7-unknown-linux-gnueabi/sysroot/usr/include/"
     include_symlink_src = "/usr/include/"
 
-    lib_symlink_dest = "/usr/xcc/armv7-unknown-linux-gnueabihf/armv7-unknown-linux-gnueabihf/sysroot/usr/lib/"
+    lib_symlink_dest = "/usr/xcc/armv7-unknown-linux-gnueabi/armv7-unknown-linux-gnueabi/sysroot/usr/lib/"
     lib_symlink_src = "/usr/lib/arm-linux-gnueabihf/"
     lib_symlink_src_2 = "/lib/arm-linux-gnueabihf/"
 

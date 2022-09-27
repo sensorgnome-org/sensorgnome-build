@@ -4,11 +4,14 @@ import subprocess
 import sys
 from os import mkdir, chdir, getcwd, path
 from shutil import copyfile
-from package_helpers import timestamp, bcolors, install_files, create_package, make_subprocess
+from package_helpers import timestamp, bcolors, install_files, create_package, make_subprocess, copytree2
 
 PROJECT = "sensorgnome-support"
 REPO = "https://github.com/sensorgnome-org/sensorgnome-support.git"
 BRANCH = "systemd"
+# To use a local copy of the repo instead of the remote git repo set SRCDIR
+SRCDIR = None # None, abs path, or path relative to build_packages dir
+SRCDIR = "/mnt/sensorgnome-support"
 
 
 def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip", host=''):
@@ -16,10 +19,14 @@ def build(temp_dir, build_output_dir, version, compiler=None, strip_bin="strip",
     build_dir = path.join(base_dir, temp_dir, PROJECT)
     print(f"[{timestamp()}]: Starting build of {PROJECT}.")
 
-    print(f"[{timestamp()}]: Git clone from {REPO}.")
-    git.Git(path.join(base_dir, temp_dir)).clone(REPO)
-    print(f"[{timestamp()}]: Git checkout branch {BRANCH}.")
-    git.Git(build_dir).checkout(BRANCH)
+    if SRCDIR:
+        print(f"[{timestamp()}]: Copying {PROJECT} from {SRCDIR}")
+        copytree2(SRCDIR, path.join(base_dir, temp_dir, PROJECT))
+    else:
+        print(f"[{timestamp()}]: Git clone from {REPO}.")
+        git.Git(path.join(base_dir, temp_dir)).clone(REPO)
+        print(f"[{timestamp()}]: Git checkout branch {BRANCH}.")
+        git.Git(build_dir).checkout(BRANCH)
 
     build_dir = path.join(base_dir, temp_dir, PROJECT)
     output_package_name = f"{PROJECT}_{version}.deb"

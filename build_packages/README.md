@@ -18,9 +18,10 @@ Run build_packages.py to create output packages.
 
 ### Dependencies
 
-Note that the `build-essential` Debian package needs to be installed to build all of the packages. Same with Python, Debian package `python3`, version 3.6 or greater
+Note that the `build-essential` Debian package needs to be installed to build all of the packages.
+Same with Python, Debian package `python3`, version 3.6 or greater
 
-The `gitpython` Python package is also used in all build scripts.
+The `GitPython` Python package is also used in all build scripts.
 
 ### package_vamp_alsa_host.py
 
